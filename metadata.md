@@ -35,3 +35,33 @@ or update headers by including them in a POST or PUT request.
 A server SHOULD only send a document upon request.  A server
 that supports application documents SHOULD provide fixed URLs for creating,
 updating, deleting, and getting these documents.
+
+### Documents
+
+* Are just files, the tusio server does not inspect or utilize the contents
+* Are uploaded and retrieved using the same REST API as file with tusio
+* Are accessed via a URL that begins with the file URL.
+
+**Request Example:**
+
+An example adding a document to an existing file with a Location: 
+http://tus.example.com/files/24e533e02ec3bc40c387f1a0e460e216
+
+Create a document resource.
+```
+POST /files/24e533e02ec3bc40c387f1a0e460e216/documents HTTP/1.1
+Host: tus.example.com
+Content-Length: 100
+Content-Range: bytes */100
+```
+```
+<document contents>
+```
+**Response Example:**
+
+```
+HTTP/1.1 201 Created
+Location: http://tus.example.com/files/24e533e02ec3bc40c387f1a0e460e216/documents/0c387f1a0e460e21624e533e02ec3bc4
+Content-Length: 0
+```
+

@@ -52,7 +52,7 @@ Create a document resource.
 POST /files/24e533e02ec3bc40c387f1a0e460e216/documents HTTP/1.1
 Host: tus.example.com
 Content-Length: 100
-Content-Range: bytes */100
+Content-Range: bytes 0-99/100
 ```
 ```
 <document contents>
@@ -62,6 +62,7 @@ Content-Range: bytes */100
 ```
 HTTP/1.1 201 Created
 Location: http://tus.example.com/files/24e533e02ec3bc40c387f1a0e460e216/documents/0c387f1a0e460e21624e533e02ec3bc4
-Content-Length: 0
+Range: bytes=0-99
+Content-Length: 100
 ```
 

@@ -11,58 +11,28 @@ of meta data are XML documents and JSON documents.
 * [Google Drive - Manage File Metadata](https://developers.google.com/drive/v2/reference/files)
 * [Dropbox REST API](https://www.dropbox.com/developers/core/api#metadata)
 
-## Headers or Documents?
+# What meta data should tusio be concerned with?
 
-Should meta data be passed as headers or documents?  Both for different reasons.
-
-Headers SHOULD be limited to meta data sent between the server and
-the client in order to facilate the correct handling of the file.
-Examples would be ETag or Expires headers used by the client to determine
-if a local copy of a file should be downloaded or not. Common headers
-are listed in [RFC4229](http://tools.ietf.org/html/rfc4229).
+  The tus-resumable-upload-protocol should limit itself to meta data related to proper file handling
+  such as the headers Content-Length and Content-Disposition.  A tusio server SHOULD be configurable
+  to handle other headers such as those listed in [RFC4229](http://tools.ietf.org/html/rfc4229).
+  
+  Any associated data beyond that necessary to handle file upload and download SHOULD be handled by 
+  applications that utilize the tus-resumable-upload-protocol.
+  
+  When an initial request for a file upload is made, the server response SHOULD include a list of 
+  accepted headers using the Access-Control-Allow-Headers.
+  
+  A tusio server MUST accept at the minimum Content-Type and Content-Length headers.
+  
+  Example:
  
-Documents MAY be used to track information about 
-the file which is application specific and not relevant to how the client
-or server handles the file.  Examples of data contained in
-a document would be an abstract of the file contents, revision dates,
-and the authors of a file.
-
-Servers SHOULD send headers to clients whenever a GET
-or HEAD request is made for a file.  Clients SHOULD be able to set
-or update headers by including them in a POST or PUT request. 
-`Should all headers be editable by the client?  Probably not.`  
-
-If a server supports documents, the server SHOULD:
-* only send documents upon request
-* provide fixed URLs for creating, updating, deleting, and getting documents
-
-### Documents
-
-* Are just files, the tusio server does not inspect or utilize the contents
-* Are uploaded and retrieved using the same REST API as file with tusio
-* Are accessed via a URL that begins with the file URL.
-
-**Request Example:**
-
-An example adding a document to an existing file with a Location: 
-http://tus.example.com/files/24e533e02ec3bc40c387f1a0e460e216
-
-Create a document resource.
+``` 
+  POST /files/24e533e02ec3bc40c387f1a0e460e216/documents HTTP/1.1
+  Host: tus.example.com
+  Content-Length: 100
+  Content-Range: bytes 0-99/100
+  Access-Control-Allow-Headers: Content-Type, Etag, Content-Length, Content-Disposition
 ```
-POST /files/24e533e02ec3bc40c387f1a0e460e216/documents HTTP/1.1
-Host: tus.example.com
-Content-Length: 100
-Content-Range: bytes 0-99/100
-```
-```
-<document contents>
-```
-**Response Example:**
-
-```
-HTTP/1.1 201 Created
-Location: http://tus.example.com/files/24e533e02ec3bc40c387f1a0e460e216/documents/0c387f1a0e460e21624e533e02ec3bc4
-Range: bytes=0-99
-Content-Length: 100
-```
+  
 
